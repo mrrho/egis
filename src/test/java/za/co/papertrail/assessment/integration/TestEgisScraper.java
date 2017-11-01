@@ -7,6 +7,8 @@ import org.junit.Test;
 import za.co.papertrail.assessment.EgisAssessment;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class TestEgisScraper extends HttpIntegrationBase {
 
@@ -18,9 +20,19 @@ public class TestEgisScraper extends HttpIntegrationBase {
     @Test
     public void shouldParseSimpleResponse() throws IOException {
         httpd.serve("<html><body><h1>Test</h1></body></html>").withStatus(NanoHTTPD.Response.Status.OK);
-        EgisAssessment.EgisTechnologies technologies =
+        Map<String, List<String>> technologies =
                 EgisAssessment.scrape("http://localhost:" + httpd.getListeningPort());
         Assert.assertNotNull(technologies);
+    }
+
+    @Test
+    public void shouldParseSuccessAndRedirectStatuses() throws IOException {
+        for(NanoHTTPD.Response.Status status: NanoHTTPD.Response.Status.values()) {
+            if(status.getRequestStatus() >= 400) {
+                continue;
+            }
+            EgisAssessment.scrape("http://localhost:" + httpd.getListeningPort());
+        }
     }
 
     @Test

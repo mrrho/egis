@@ -5,15 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.helper.W3CDom;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple scraper/parser for the online EGIS technology list.
  *
  * Provides two API methods for parsing the list in HTML. The scrape {@link EgisAssessment#scrape(String)} scrape}
  * method consumes a URL string and {@link EgisAssessment#parse(Document) parse} provides a method that consumes a
- * standard W3C {@link Document document}. Both return an {@link EgisTechnologies} structure that lists the technologies
+ * standard W3C {@link Document document}. Both return a {@link Map map} that lists the technologies
  * by category.
  */
 public class EgisAssessment {
@@ -28,7 +36,7 @@ public class EgisAssessment {
 
     public static void main(String[] args) {
         try {
-            EgisTechnologies technologies = new EgisAssessment().scrape(
+            Map<String, List<String>> technologies = new EgisAssessment().scrape(
                     "https://github.com/egis/handbook/blob/master/Tech-Stack.md");
             System.out.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(technologies));
         }
@@ -49,7 +57,7 @@ public class EgisAssessment {
      * @return list of technolopgies grouped by category
      * @throws IOException when an error occurs reading from the resource
      */
-    public static EgisTechnologies scrape(String url) throws IOException {
+    public static Map<String, List<String>> scrape(String url) throws IOException {
         // use org.w3c.Document so that other compliant tools can also provide a document for parsing
         Document document = new W3CDom().fromJsoup(Jsoup.connect(url).get());
         return parse(document);
@@ -60,12 +68,18 @@ public class EgisAssessment {
      * @param document Input {@link Document document} to parse
      * @return list of technologies grouped by category
      */
-    public static EgisTechnologies parse(Document document) {
-        return new EgisTechnologies();
-    }
+    public static Map<String, List<String>> parse(Document document) {
+//        XPath path = XPathFactory.newInstance().newXPath().evaluate(
+//                "/html/body/div[@role='main']/div[@itemscope]/div[@data-pjax-container]/div[@container]" +
+//                        "/div[@class='repository-content']/div[@class='file']")
+        try {
+            NodeList nodes = (NodeList) XPathFactory.newInstance().newXPath().evaluate(
+                    "/article[@class='markdown-body']", document, XPathConstants.NODESET);
 
-    public static class EgisTechnologies {
-
+        } catch (XPathExpressionException ignore) {
+            // the xpath expression provided is internal and should always be correct
+        }
+        return new HashMap<>();
     }
 
 }
