@@ -52,4 +52,20 @@ public class TestEgisScraper extends HttpIntegrationBase {
         }
     }
 
+    @Test
+    public void shouldParsePartialHtml() throws IOException {
+        httpd.serve("<html><body><h1>Test</h1>").withStatus(NanoHTTPD.Response.Status.OK);
+        Map<String, List<String>> technologies =
+                EgisAssessment.scrape("http://localhost:" + httpd.getListeningPort());
+        Assert.assertNotNull(technologies);
+    }
+
+    @Test
+    public void shouldParseBrokenHtml() throws IOException {
+        httpd.serve("<ht").withStatus(NanoHTTPD.Response.Status.OK);
+        Map<String, List<String>> technologies =
+                EgisAssessment.scrape("http://localhost:" + httpd.getListeningPort());
+        Assert.assertNotNull(technologies);
+    }
+
 }
