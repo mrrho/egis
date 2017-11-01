@@ -19,7 +19,7 @@ public class TestEgisScraper extends HttpIntegrationBase {
     public void shouldParseSimpleResponse() throws IOException {
         httpd.serve("<html><body><h1>Test</h1></body></html>").withStatus(NanoHTTPD.Response.Status.OK);
         EgisAssessment.EgisTechnologies technologies =
-                new EgisAssessment("http://localhost:" + httpd.getListeningPort()).scrape();
+                new EgisAssessment().scrape("http://localhost:" + httpd.getListeningPort());
         Assert.assertNotNull(technologies);
 
     }
