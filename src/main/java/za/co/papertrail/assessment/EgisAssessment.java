@@ -49,7 +49,7 @@ public class EgisAssessment {
      * @return list of technolopgies grouped by category
      * @throws IOException when an error occurs reading from the resource
      */
-    public EgisTechnologies scrape(String url) throws IOException {
+    public static EgisTechnologies scrape(String url) throws IOException {
         // use org.w3c.Document so that other compliant tools can also provide a document for parsing
         Document document = new W3CDom().fromJsoup(Jsoup.connect(url).get());
         return parse(document);
@@ -60,7 +60,7 @@ public class EgisAssessment {
      * @param document Input {@link Document document} to parse
      * @return list of technologies grouped by category
      */
-    public EgisTechnologies parse(Document document) {
+    public static EgisTechnologies parse(Document document) {
         return new EgisTechnologies();
     }
 

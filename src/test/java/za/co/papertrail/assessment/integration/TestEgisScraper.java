@@ -19,9 +19,25 @@ public class TestEgisScraper extends HttpIntegrationBase {
     public void shouldParseSimpleResponse() throws IOException {
         httpd.serve("<html><body><h1>Test</h1></body></html>").withStatus(NanoHTTPD.Response.Status.OK);
         EgisAssessment.EgisTechnologies technologies =
-                new EgisAssessment().scrape("http://localhost:" + httpd.getListeningPort());
+                EgisAssessment.scrape("http://localhost:" + httpd.getListeningPort());
         Assert.assertNotNull(technologies);
+    }
 
+    @Test
+    public void shouldHandleErrorStatusesElegantly() {
+        for(NanoHTTPD.Response.Status status: NanoHTTPD.Response.Status.values()) {
+            if(status.getRequestStatus() < 400) {
+                continue;
+            }
+            try {
+                httpd.serve("html />").withStatus(status);
+                EgisAssessment.scrape("http://localhost:" + httpd.getListeningPort());
+                // this is unexpected
+                Assert.fail("Status " + status + " should have caused an exception");
+            } catch (IOException ignore) {
+                // this is expected
+            }
+        }
     }
 
 }

@@ -12,7 +12,7 @@ public class TestEgisParser {
     @Test
     public void shouldParseSimpleDocument() {
         Document document = new W3CDom().fromJsoup(Jsoup.parse("<html><head /><body /></html>"));
-        EgisAssessment.EgisTechnologies technologies = new EgisAssessment().parse(document);
+        EgisAssessment.EgisTechnologies technologies = EgisAssessment.parse(document);
         Assert.assertNotNull(technologies);
     }
 
