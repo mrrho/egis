@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import za.co.papertrail.assessment.data.EgisTechnologies;
 
 import java.io.IOException;
 
@@ -35,6 +34,10 @@ public class EgisAssessment {
     public EgisTechnologies scrape() throws IOException {
         Document document = Jsoup.connect(url).get();
         return new EgisTechnologies();
+    }
+
+    public static class EgisTechnologies {
+
     }
 
 }
